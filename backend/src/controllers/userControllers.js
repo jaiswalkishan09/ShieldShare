@@ -42,7 +42,6 @@ const signUp = async (req, res) => {
       let token = jwt.sign({ userId: userId, uName: uName }, SECRET_KEY);
       databaseConnection ? databaseConnection.destroy() : null;
       return res.status(201).json({
-        userId: userId,
         uName: uName,
         token: token,
       });
@@ -97,7 +96,6 @@ const signIn = async (req, res) => {
         );
         databaseConnection ? databaseConnection.destroy() : null;
         return res.status(200).json({
-          userId: userDetails.User_Id,
           uName: uName,
           token: token,
         });

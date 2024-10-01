@@ -1,20 +1,21 @@
-const express= require("express");
+const express = require("express");
 const userAuthRouter = require("./routes/userAuthRoutes");
 const app = express();
-const dotenv=require("dotenv")
+const dotenv = require("dotenv");
 const userRouter = require("./routes/userRoutes");
-const cors= require("cors")
+const cors = require("cors");
+const path = require("path");
 
-dotenv.config({path:__dirname+'/.env'});
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 app.use(express.json());
 app.use(cors());
 
 app.use("/users", userRouter);
-app.use("/usersauth",userAuthRouter)
+app.use("/usersauth", userAuthRouter);
 
-const PORT=process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT,()=>{
-    console.log("server listning on port no:",PORT);
-})
+app.listen(PORT, () => {
+  console.log("server listning on port no:", PORT);
+});

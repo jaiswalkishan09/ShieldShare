@@ -26,8 +26,12 @@ function CrypotGenerator() {
     const exportedAsString = ab2str(exported);
     const exportedAsBase64 = window.btoa(exportedAsString);
     const pemExported = `-----BEGIN ${type} KEY-----\n${exportedAsBase64}\n-----END ${type} KEY-----`;
-
-    type === "PUBLIC" ? setPublicKey(pemExported) : setPrivateKey(pemExported);
+    if (type === "PUBLIC") {
+      setPublicKey(pemExported);
+      localStorage.setItem("publicKey", pemExported);
+    } else {
+      setPrivateKey(pemExported);
+    }
   }
 
   // Generate RSA Key Pair
@@ -54,7 +58,8 @@ function CrypotGenerator() {
           <input
             type="text"
             placeholder="Public Key"
-            value={publicKey}
+            defaultValue={publicKey}
+            // value={publicKey}
             className="mt-2 p-2 w-full border rounded-md disabled:block"
           />
 
@@ -78,7 +83,8 @@ function CrypotGenerator() {
             <input
               type="text"
               placeholder="Private Key"
-              value={privateKey}
+              defaultValue={privateKey}
+              // value={privateKey}
               className="mt-2 p-2 w-full border rounded-md "
             />
 

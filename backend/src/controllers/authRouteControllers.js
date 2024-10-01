@@ -2,6 +2,7 @@
 var knex = require("knex");
 
 const dbConnection = require("../common/connection");
+const { getUserDetailsBasedOnUserId } = require("../common/commonFunction");
 
 const getUserDetails = async (req, res) => {
   let connectDb = await dbConnection.getDataBaseConnection();
@@ -12,12 +13,12 @@ const getUserDetails = async (req, res) => {
       databaseConnection,
       userId
     );
+
     if (userData.length > 0) {
       userData = userData[0];
     }
     databaseConnection ? databaseConnection.destroy() : null;
     return res.status(200).json({
-      userId: userId,
       userName: userData.User_Name,
       firstName: userData.First_Name,
       lastName: userData.Last_Name,

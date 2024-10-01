@@ -2,6 +2,7 @@ import Cookies from "universal-cookie";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CrypotGenerator from "./CrypotGenerator";
+import { encryptData } from "../utils/common";
 
 function SignUp() {
   const [userName, setUserName] = useState("");
@@ -100,14 +101,17 @@ function SignUp() {
         !emailCheck &&
         !mobileCheck &&
         !passwordCheck &&
-        !userNameCheck
+        !userNameCheck &&
+        localStorage.getItem("publicKey")
       ) {
         setLoader(true);
         let data = {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          mobileNo: mobile,
+          publicKey: localStorage.getItem("publicKey"),
+          uName: userName,
+          firstName: await encryptData(firstName),
+          lastName: await encryptData(lastName),
+          email: await encryptData(email),
+          mobileNo: await encryptData(mobile),
           password: password,
         };
         const requestOptions = {
@@ -123,6 +127,7 @@ function SignUp() {
         if (response.status === 201) {
           const cookies = new Cookies();
           cookies.set("token", json_res.token);
+          localStorage.setItem("uName", json_res.uName);
           handleMiddleware();
           setLoader(false);
         } else {
@@ -133,6 +138,7 @@ function SignUp() {
         alert("Please sign up all the fields with valid data.");
       }
     } catch (err) {
+      console.log(err);
       setLoader(false);
       alert("Something went wrong please try again.");
     }

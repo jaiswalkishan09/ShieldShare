@@ -138,7 +138,6 @@ function SignUp() {
         alert("Please sign up all the fields with valid data.");
       }
     } catch (err) {
-      console.log(err);
       setLoader(false);
       alert("Something went wrong please try again.");
     }

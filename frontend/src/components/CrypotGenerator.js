@@ -39,7 +39,7 @@ function CrypotGenerator() {
     const { publicKey, privateKey } = await window.crypto.subtle.generateKey(
       {
         name: "RSA-OAEP",
-        modulusLength: 4096, // key size
+        modulusLength: 1024, // key size
         publicExponent: new Uint8Array([1, 0, 1]), // 65537
         hash: "SHA-256", // for OAEP
       },

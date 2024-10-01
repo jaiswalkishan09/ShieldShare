@@ -24,7 +24,7 @@ const PersonalData = ({ privateKey }) => {
 
         // Await the conversion to JSON
         const json_res = await response.json();
-        console.log(json_res);
+
         // Check the status code
         if (response.status === 200 && json_res) {
           setPersonalData(json_res);
@@ -44,18 +44,17 @@ const PersonalData = ({ privateKey }) => {
       async function processPersonalData(params) {
         const objectKeys = Object.keys(params);
 
+        const decryptedDataAll = {};
         for (let i = 0; i < objectKeys.length; i++) {
           if (objectKeys[i] != "userName") {
             const decryptedData = await decryptData(
               params[objectKeys[i]],
               privateKey
             );
-            setDecryptedData({
-              ...decryptedPersonalData,
-              [objectKeys[i]]: decryptedData,
-            });
+            decryptedDataAll[objectKeys[i]] = decryptedData;
           }
         }
+        setDecryptedData(decryptedDataAll);
       }
 
       if (privateKey && personalData) {

@@ -13,6 +13,7 @@ async function str2ab(str) {
 
 const pemToArrayBuffer = async (pem, type) => {
   // Remove the header and footer of the PEM string
+  pem = pem.trim();
   const pemHeader =
     type === "PUBLIC"
       ? "-----BEGIN PUBLIC KEY-----"
@@ -45,12 +46,12 @@ const importKey = async (pemKey, keyType) => {
   const keyUsages = keyType === "PUBLIC" ? ["encrypt"] : ["decrypt"];
 
   // Import the key based on type (spki for PUBLIC, pkcs8 for PRIVATE)
-  return window.crypto.subtle.importKey(
+  return await window.crypto.subtle.importKey(
     format,
     keyBuffer,
     algorithm,
-    true, // Key is extractable
-    keyUsages // Define usage: encrypt for public, decrypt for private
+    true,
+    keyUsages
   );
 };
 
@@ -76,21 +77,25 @@ export const encryptData = async (inputData) => {
 };
 
 export const decryptData = async (encryptedData, privateKey) => {
-  const formatPrivateKey = await importKey(privateKey, "PRIVATE");
+  try {
+    const formatPrivateKey = await importKey(privateKey, "PRIVATE");
 
-  const encryptedDataBuffer = Uint8Array.from(atob(encryptedData), (c) =>
-    c.charCodeAt(0)
-  ).buffer;
+    const encryptedDataString = atob(encryptedData);
 
-  const decrypted = await window.crypto.subtle.decrypt(
-    {
-      name: "RSA-OAEP",
-    },
-    formatPrivateKey, // Private key for decryption
-    encryptedDataBuffer // Encrypted data
-  );
+    const encryptedDataBuffer = await str2ab(encryptedDataString);
 
-  const decoder = new TextDecoder();
-  const decryptedString = decoder.decode(decrypted);
-  return decryptedString;
+    const decrypted = await window.crypto.subtle.decrypt(
+      {
+        name: "RSA-OAEP",
+      },
+      formatPrivateKey, // Private key for decryption
+      encryptedDataBuffer // Encrypted data
+    );
+
+    const decoder = new TextDecoder();
+    const decryptedString = decoder.decode(decrypted);
+    return decryptedString;
+  } catch (e) {
+    alert("Something went wrong please try again latter.");
+  }
 };

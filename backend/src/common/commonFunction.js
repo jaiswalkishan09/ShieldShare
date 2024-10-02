@@ -133,6 +133,60 @@ async function getUserHistory(databaseConnection, userId) {
     throw e;
   }
 }
+
+async function getPendingRequestToApporve(databaseConnection, userId) {
+  try {
+    return databaseConnection(tables.userRequest)
+      .select(
+        "ub.User_Name as requestedUserName",
+        "ur.Request_Id as requestId",
+        "ur.Requested_Date as requestedDate",
+        "ur.Request_Status as requestStatus",
+        "ub.Public_Key as publicKey"
+      )
+      .from(`${tables.userRequest} as ur`)
+      .innerJoin(
+        `${tables.userBasicDetails} as ub`,
+        "ur.Requested_By",
+        "ub.User_Id"
+      )
+      .where("ur.Requested_To", userId)
+      .where("ur.Request_Status", "PENDING")
+      .orderBy("ur.Requested_Date", "desc")
+      .then((data) => {
+        return data;
+      })
+      .catch((e) => {
+        console.log("Error in getPendingRequestToApporve .catch block", e);
+        throw e;
+      });
+  } catch (e) {
+    console.log("Error in getPendingRequestToApporve main catch block", e);
+    throw e;
+  }
+}
+
+async function updateRequestTable(
+  databaseConnection,
+  data,
+  tableName,
+  requestId
+) {
+  try {
+    return databaseConnection(tableName)
+      .update(data)
+      .where("Request_Id", requestId)
+      .then((res) => {
+        return res;
+      })
+      .catch((e) => {
+        throw e;
+      });
+  } catch (e) {
+    console.log("Error in updateRequestTable main catch block.", e);
+    throw e;
+  }
+}
 module.exports = {
   checkExistingUser,
   getUserDetailsBasedOnUname,
@@ -140,4 +194,6 @@ module.exports = {
   getAllUserWithoutAnyPendingRequest,
   insertIntoTable,
   getUserHistory,
+  getPendingRequestToApporve,
+  updateRequestTable,
 };

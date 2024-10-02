@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
 import { decryptData } from "../utils/common";
 
-const PersonalData = ({ privateKey }) => {
+const PersonalData = ({
+  privateKey,
+  decryptedPersonalData,
+  setDecryptedData,
+}) => {
   const cookies = new Cookies();
   // Sample data for demonstration purposes
   const [personalData, setPersonalData] = useState(null);
   const [token] = useState("bearer " + cookies.get("token"));
-  const [decryptedPersonalData, setDecryptedData] = useState({});
+
   useEffect(() => {
     const fetchData = async () => {
       try {

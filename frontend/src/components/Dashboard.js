@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import PersonalData from "./PersonalData";
 import RequestData from "./RequestData";
 import History from "./History";
+import Approve from "./Approve";
 
 const Dashboard = () => {
   const [privateKey, setPrivateKey] = useState("");
   const [selectedComponent, setSelectedComponent] = useState("personal");
+
+  const [decryptedPersonalData, setDecryptedData] = useState({});
 
   const handleInputChange = (e) => {
     setPrivateKey(e.target.value);
@@ -35,14 +38,14 @@ const Dashboard = () => {
       </div>
 
       {/* Buttons Section */}
-      <div className="w-full max-w-md grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-4">
         <button
           onClick={() => setSelectedComponent("personal")}
           className={`${
             selectedComponent === "personal"
               ? "bg-blue-700 font-bold"
               : "bg-blue-500 font-medium"
-          } text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 hover:font-bold  w-full `}
+          } text-white py-4 px-4 rounded-lg shadow-md hover:bg-blue-700 hover:font-bold  w-full `}
         >
           Personal Information
         </button>
@@ -50,11 +53,21 @@ const Dashboard = () => {
           onClick={() => setSelectedComponent("request")}
           className={`${
             selectedComponent === "request"
-              ? "bg-green-700 font-bold"
-              : "bg-green-500 font-medium"
-          } text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-700 hover:font-bold w-full`}
+              ? "bg-gray-700 font-bold"
+              : "bg-gray-500 font-medium"
+          } text-white py-4 px-4 rounded-lg shadow-md hover:bg-gray-700 hover:font-bold w-full`}
         >
           Request Users Data
+        </button>
+        <button
+          onClick={() => setSelectedComponent("approve")}
+          className={`${
+            selectedComponent === "approve"
+              ? "bg-green-700 font-bold"
+              : "bg-green-500 font-medium"
+          } text-white py-4 px-4 rounded-lg shadow-md hover:bg-green-700 hover:font-bold w-full`}
+        >
+          Approve User Request
         </button>
         <button
           onClick={() => setSelectedComponent("history")}
@@ -64,10 +77,17 @@ const Dashboard = () => {
         </button>
       </div>
       {selectedComponent === "personal" && (
-        <PersonalData privateKey={privateKey} />
+        <PersonalData
+          privateKey={privateKey}
+          decryptedPersonalData={decryptedPersonalData}
+          setDecryptedData={setDecryptedData}
+        />
       )}
       {selectedComponent === "request" && <RequestData />}
       {selectedComponent === "history" && <History />}
+      {selectedComponent === "approve" && (
+        <Approve decryptedPersonalData={decryptedPersonalData} />
+      )}
     </div>
   );
 };

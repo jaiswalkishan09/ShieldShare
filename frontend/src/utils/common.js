@@ -56,11 +56,8 @@ const importKey = async (pemKey, keyType) => {
 };
 
 // Encrypt Data
-export const encryptData = async (inputData) => {
-  const publicKey = await importKey(
-    localStorage.getItem("publicKey"),
-    "PUBLIC"
-  );
+export const encryptData = async (inputData, publicKeyParam) => {
+  const publicKey = await importKey(publicKeyParam, "PUBLIC");
   const encoder = new TextEncoder();
   const data = encoder.encode(inputData);
 
@@ -96,6 +93,6 @@ export const decryptData = async (encryptedData, privateKey) => {
     const decryptedString = decoder.decode(decrypted);
     return decryptedString;
   } catch (e) {
-    alert("Something went wrong please try again latter.");
+    alert("Invalid private key.");
   }
 };

@@ -40,7 +40,7 @@ const signUp = async (req, res) => {
         data,
         tables.userBasicDetails
       );
-      let token = jwt.sign({ userId: userId, uName: uName }, SECRET_KEY);
+      let token = jwt.sign({ userId: userId[0], uName: uName }, SECRET_KEY);
       databaseConnection ? databaseConnection.destroy() : null;
       return res.status(201).json({
         uName: uName,

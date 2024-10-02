@@ -108,10 +108,19 @@ function SignUp() {
         let data = {
           publicKey: localStorage.getItem("publicKey"),
           uName: userName,
-          firstName: await encryptData(firstName),
-          lastName: await encryptData(lastName),
-          email: await encryptData(email),
-          mobileNo: await encryptData(mobile),
+          firstName: await encryptData(
+            firstName,
+            localStorage.getItem("publicKey")
+          ),
+          lastName: await encryptData(
+            lastName,
+            localStorage.getItem("publicKey")
+          ),
+          email: await encryptData(email, localStorage.getItem("publicKey")),
+          mobileNo: await encryptData(
+            mobile,
+            localStorage.getItem("publicKey")
+          ),
           password: password,
         };
         const requestOptions = {

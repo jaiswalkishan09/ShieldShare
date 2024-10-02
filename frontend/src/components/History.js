@@ -9,7 +9,10 @@ const History = () => {
   const [data, setData] = useState(null);
 
   const formatDate = (isoDate) => {
-    return DateTime.fromISO(isoDate).toLocal();
+    const dateTime = DateTime.fromISO(isoDate);
+    return dateTime.isValid
+      ? dateTime.toLocal().toFormat("yyyy-LL-dd hh:mm a")
+      : "Invalid date";
   };
 
   useEffect(() => {

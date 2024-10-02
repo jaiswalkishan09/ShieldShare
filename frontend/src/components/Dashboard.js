@@ -84,7 +84,7 @@ const Dashboard = () => {
         />
       )}
       {selectedComponent === "request" && <RequestData />}
-      {selectedComponent === "history" && <History />}
+      {selectedComponent === "history" && <History privateKey={privateKey} />}
       {selectedComponent === "approve" && (
         <Approve decryptedPersonalData={decryptedPersonalData} />
       )}

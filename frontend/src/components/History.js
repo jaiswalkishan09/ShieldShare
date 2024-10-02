@@ -1,13 +1,14 @@
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { decryptData } from "../utils/common";
 
-const History = () => {
+const History = ({ privateKey }) => {
   const cookies = new Cookies();
   const [token] = useState("bearer " + cookies.get("token"));
   const [showUserData, setShowUserData] = useState({});
   const [data, setData] = useState(null);
-
+  console.log(showUserData);
   const formatDate = (isoDate) => {
     const dateTime = DateTime.fromISO(isoDate);
     return dateTime.isValid
@@ -45,6 +46,30 @@ const History = () => {
 
     fetchData();
   }, []);
+
+  async function processPersonalData(params, requestId) {
+    if (privateKey) {
+      const objectKeys = Object.keys(params);
+      console.log(objectKeys);
+
+      const decryptedDataAll = { requestId };
+      for (let i = 0; i < objectKeys.length; i++) {
+        if (
+          ["firstName", "lastName", "email", "mobileNo"].includes(objectKeys[i])
+        ) {
+          const decryptedData = await decryptData(
+            params[objectKeys[i]],
+            privateKey
+          );
+          decryptedDataAll[objectKeys[i]] = decryptedData;
+        }
+      }
+
+      setShowUserData(decryptedDataAll);
+    } else {
+      alert("Please add valid private key");
+    }
+  }
 
   return (
     <div className="w-full mt-8">
@@ -93,13 +118,10 @@ const History = () => {
                   </div>
                   {user.requestStatus === "APPROVED" ? (
                     <div>
-                      {!showUserData[user.requestId] ? (
+                      {showUserData["requestId"] != user.requestId ? (
                         <button
                           onClick={() =>
-                            setShowUserData({
-                              ...showUserData,
-                              [user.requestId]: true,
-                            })
+                            processPersonalData(user, user.requestId)
                           }
                           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
                         >
@@ -108,16 +130,17 @@ const History = () => {
                       ) : (
                         <div className="mt-4 space-y-2 bg-white p-4 rounded-lg shadow-inner">
                           <p>
-                            <strong>First Name:</strong> {user.firstName}
+                            <strong>First Name:</strong>{" "}
+                            {showUserData.firstName}
                           </p>
                           <p>
-                            <strong>Last Name:</strong> {user.lastName}
+                            <strong>Last Name:</strong> {showUserData.lastName}
                           </p>
                           <p>
-                            <strong>Email:</strong> {user.email}
+                            <strong>Email:</strong> {showUserData.email}
                           </p>
                           <p>
-                            <strong>Mobile No:</strong> {user.mobileNo}
+                            <strong>Mobile No:</strong> {showUserData.mobileNo}
                           </p>
                         </div>
                       )}

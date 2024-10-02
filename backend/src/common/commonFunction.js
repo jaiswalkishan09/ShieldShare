@@ -36,6 +36,36 @@ async function getUserDetailsBasedOnUserId(databaseConnection, userId) {
     return false;
   }
 }
+
+async function getAllUserWithoutAnyPendingRequest(databaseConnection, userId) {
+  try {
+    return databaseConnection(tables.userBasicDetails)
+      .select("User_Id as userId", "User_Name as userName")
+      .whereNotIn("User_Id", function () {
+        this.select("Requested_To")
+          .from("user_request")
+          .where("Requested_By", userId)
+          .andWhere("Request_Status", "PENDING");
+      })
+      .where("User_Id", "!=", userId)
+      .then((data) => {
+        return data;
+      })
+      .catch((e) => {
+        console.log(
+          "Error in getAllUserWithoutAnyPendingRequest .catch block",
+          e
+        );
+        throw e;
+      });
+  } catch (e) {
+    console.log(
+      "Error in getAllUserWithoutAnyPendingRequest main catch block",
+      e
+    );
+    throw e;
+  }
+}
 async function checkExistingUser(databaseConnection, uName) {
   try {
     const userData = await getUserDetailsBasedOnUname(
@@ -50,6 +80,22 @@ async function checkExistingUser(databaseConnection, uName) {
   } catch (e) {
     console.log("Error in checkExistingUser main catch block", e);
     return "Error occurred";
+  }
+}
+
+async function insertIntoTable(databaseConnection, data, tableName) {
+  try {
+    return databaseConnection(tableName)
+      .insert(data)
+      .then((res) => {
+        return res;
+      })
+      .catch((e) => {
+        throw e;
+      });
+  } catch (e) {
+    console.log("Error in insertIntoTable main catch block.", e);
+    throw e;
   }
 }
 
@@ -74,4 +120,6 @@ module.exports = {
   checkExistingUser,
   getUserDetailsBasedOnUname,
   getUserDetailsBasedOnUserId,
+  getAllUserWithoutAnyPendingRequest,
+  insertIntoTable,
 };

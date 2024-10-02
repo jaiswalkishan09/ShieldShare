@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PersonalData from "./PersonalData";
+import RequestData from "./RequestData";
 
 const Dashboard = () => {
   const [privateKey, setPrivateKey] = useState("");
@@ -7,10 +8,6 @@ const Dashboard = () => {
 
   const handleInputChange = (e) => {
     setPrivateKey(e.target.value);
-  };
-
-  const handleButtonClick = (type) => {
-    console.log(`${type} clicked!`);
   };
 
   return (
@@ -39,23 +36,27 @@ const Dashboard = () => {
       {/* Buttons Section */}
       <div className="w-full max-w-md grid grid-cols-1 gap-4 md:grid-cols-3">
         <button
-          onClick={() => handleButtonClick("Personal Information")}
+          onClick={() => setSelectedComponent("personal")}
           className={`${
             selectedComponent === "personal"
               ? "bg-blue-700 font-bold"
-              : "bg-blue-500"
+              : "bg-blue-500 font-medium"
           } text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 hover:font-bold  w-full `}
         >
           Personal Information
         </button>
         <button
-          onClick={() => handleButtonClick("Other Users")}
-          className="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 w-full"
+          onClick={() => setSelectedComponent("request")}
+          className={`${
+            selectedComponent === "request"
+              ? "bg-green-700 font-bold"
+              : "bg-green-500 font-medium"
+          } text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-700 hover:font-bold w-full`}
         >
-          Other Users
+          Request Users Data
         </button>
         <button
-          onClick={() => handleButtonClick("History")}
+          onClick={() => selectedComponent("history")}
           className="bg-yellow-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-yellow-600 w-full"
         >
           History
@@ -64,7 +65,7 @@ const Dashboard = () => {
       {selectedComponent === "personal" && (
         <PersonalData privateKey={privateKey} />
       )}
-      {/* {selectedComponent === "history" &&} */}
+      {selectedComponent === "request" && <RequestData />}
     </div>
   );
 };

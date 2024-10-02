@@ -9,7 +9,7 @@ const PersonalData = ({ privateKey }) => {
   const [token] = useState("bearer " + cookies.get("token"));
   const [decryptedPersonalData, setDecryptedData] = useState({});
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchData = async () => {
       try {
         const requestOptions = {
           method: "GET",
@@ -36,7 +36,7 @@ const PersonalData = ({ privateKey }) => {
       }
     };
 
-    fetchTasks();
+    fetchData();
   }, []);
 
   useEffect(() => {

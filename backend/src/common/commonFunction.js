@@ -166,6 +166,37 @@ async function getPendingRequestToApporve(databaseConnection, userId) {
   }
 }
 
+async function getApproveRequestHistory(databaseConnection, userId) {
+  try {
+    return databaseConnection(tables.userRequest)
+      .select(
+        "ub.User_Name as requestedUserName",
+        "ur.Request_Id as requestId",
+        "ur.Requested_Date as requestedDate",
+        "ur.Request_Updated_On as requestUpdatedOn",
+        "ur.Request_Status as requestStatus"
+      )
+      .from(`${tables.userRequest} as ur`)
+      .innerJoin(
+        `${tables.userBasicDetails} as ub`,
+        "ur.Requested_By",
+        "ub.User_Id"
+      )
+      .where("ur.Requested_To", userId)
+      .orderBy("ur.Requested_Date", "desc")
+      .then((data) => {
+        return data;
+      })
+      .catch((e) => {
+        console.log("Error in getApproveRequestHistory .catch block", e);
+        throw e;
+      });
+  } catch (e) {
+    console.log("Error in getApproveRequestHistory main catch block", e);
+    throw e;
+  }
+}
+
 async function updateRequestTable(
   databaseConnection,
   data,
@@ -196,4 +227,5 @@ module.exports = {
   getUserHistory,
   getPendingRequestToApporve,
   updateRequestTable,
+  getApproveRequestHistory,
 };

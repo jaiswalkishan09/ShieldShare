@@ -11,6 +11,7 @@ const {
   getUserHistory,
   getPendingRequestToApporve,
   updateRequestTable,
+  getApproveRequestHistory,
 } = require("../common/commonFunction");
 const { tables } = require("../common/tableAlias");
 
@@ -152,6 +153,32 @@ const getApprovalPendingRequest = async (req, res) => {
   }
 };
 
+const getApprovalHistoryRequest = async (req, res) => {
+  try {
+    let connectDb = await dbConnection.getDataBaseConnection();
+    const databaseConnection = knex(connectDb.connection);
+    try {
+      let userId = req.userId;
+      let userData = await getApproveRequestHistory(databaseConnection, userId);
+
+      databaseConnection ? databaseConnection.destroy() : null;
+      return res.status(200).json({
+        requestData: userData,
+      });
+    } catch (e) {
+      databaseConnection ? databaseConnection.destroy() : null;
+      console.log("Error in getApprovalHistoryRequest main catch block", e);
+      return res
+        .status(500)
+        .json({ message: "Something went wrong please try again." });
+    }
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong please try again." });
+  }
+};
+
 const updateRequest = async (req, res) => {
   const { requestId, status, firstName, lastName, email, mobileNo } = req.body;
 
@@ -201,4 +228,5 @@ module.exports = {
   getAllUserHistory,
   getApprovalPendingRequest,
   updateRequest,
+  getApprovalHistoryRequest,
 };

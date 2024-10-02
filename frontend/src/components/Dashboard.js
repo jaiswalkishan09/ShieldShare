@@ -3,6 +3,7 @@ import PersonalData from "./PersonalData";
 import RequestData from "./RequestData";
 import History from "./History";
 import Approve from "./Approve";
+import ApproveHistory from "./ApproveHistory";
 
 const Dashboard = () => {
   const [privateKey, setPrivateKey] = useState("");
@@ -38,7 +39,7 @@ const Dashboard = () => {
       </div>
 
       {/* Buttons Section */}
-      <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-4">
+      <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-5">
         <button
           onClick={() => setSelectedComponent("personal")}
           className={`${
@@ -69,11 +70,18 @@ const Dashboard = () => {
         >
           Approve User Request
         </button>
+
         <button
           onClick={() => setSelectedComponent("history")}
+          className="bg-pink-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-pink-600 w-full"
+        >
+          Requested Data History
+        </button>
+        <button
+          onClick={() => setSelectedComponent("approvehistory")}
           className="bg-yellow-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-yellow-600 w-full"
         >
-          History
+          Approve/Reject Data History
         </button>
       </div>
       {selectedComponent === "personal" && (
@@ -88,6 +96,7 @@ const Dashboard = () => {
       {selectedComponent === "approve" && (
         <Approve decryptedPersonalData={decryptedPersonalData} />
       )}
+      {selectedComponent === "approvehistory" && <ApproveHistory />}
     </div>
   );
 };

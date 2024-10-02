@@ -1,21 +1,18 @@
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { decryptData } from "../utils/common";
 
-const History = ({ privateKey }) => {
+const ApproveHistory = () => {
   const cookies = new Cookies();
   const [token] = useState("bearer " + cookies.get("token"));
-  const [showUserData, setShowUserData] = useState({});
-  const [data, setData] = useState(null);
-  console.log(showUserData);
+  const [users, setUsers] = useState(null);
   const formatDate = (isoDate) => {
     const dateTime = DateTime.fromISO(isoDate);
     return dateTime.isValid
       ? dateTime.toLocal().toFormat("yyyy-LL-dd hh:mm a")
       : "Invalid date";
   };
-
+  const [processingRequest, setProcessingRequest] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,7 +23,7 @@ const History = ({ privateKey }) => {
 
         // Await the fetch call
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/usersauth/history`,
+          `${process.env.REACT_APP_BACKEND_URL}/usersauth/approvalHistory`,
           requestOptions
         );
 
@@ -35,7 +32,7 @@ const History = ({ privateKey }) => {
 
         // Check the status code
         if (response.status === 200 && json_res) {
-          setData(json_res.requestData);
+          setUsers(json_res.requestData);
         } else {
           alert("Something went wrong please try again.");
         }
@@ -47,44 +44,20 @@ const History = ({ privateKey }) => {
     fetchData();
   }, []);
 
-  async function processPersonalData(params, requestId) {
-    if (privateKey) {
-      const objectKeys = Object.keys(params);
-      console.log(objectKeys);
-
-      const decryptedDataAll = { requestId };
-      for (let i = 0; i < objectKeys.length; i++) {
-        if (
-          ["firstName", "lastName", "email", "mobileNo"].includes(objectKeys[i])
-        ) {
-          const decryptedData = await decryptData(
-            params[objectKeys[i]],
-            privateKey
-          );
-          decryptedDataAll[objectKeys[i]] = decryptedData;
-        }
-      }
-
-      setShowUserData(decryptedDataAll);
-    } else {
-      alert("Please add valid private key");
-    }
-  }
-
   return (
     <div className="w-full mt-8">
-      <h2 className="text-2xl font-bold mb-4 ">Requested Data History</h2>
-      {data ? (
-        data.length > 0 ? (
+      <h2 className="text-2xl font-bold mb-4 ">Approval/Reject History</h2>
+      {users ? (
+        users.length > 0 ? (
           <ul className="space-y-4">
-            {data.map((user) => (
+            {users.map((user) => (
               <li
-                key={user.requestId}
-                className="flex flex-col justify-center bg-white shadow-md rounded-lg p-4"
+                key={user.userId}
+                className="flex flex-col justify-between bg-white shadow-md rounded-lg p-4"
               >
                 <div className="flex justify-between text-gray-800 text-lg font-medium">
                   <div>
-                    <strong>Requested To:</strong> {user.requestedUserName}
+                    <strong>Requested By:</strong> {user.requestedUserName}
                   </div>
                   <div>
                     <strong>Status:</strong>
@@ -116,45 +89,13 @@ const History = ({ privateKey }) => {
                       ""
                     )}
                   </div>
-                  {user.requestStatus === "APPROVED" ? (
-                    <div>
-                      {showUserData["requestId"] != user.requestId ? (
-                        <button
-                          onClick={() =>
-                            processPersonalData(user, user.requestId)
-                          }
-                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
-                        >
-                          View Data
-                        </button>
-                      ) : (
-                        <div className="mt-4 space-y-2 bg-white p-4 rounded-lg shadow-inner">
-                          <p>
-                            <strong>First Name:</strong>{" "}
-                            {showUserData.firstName}
-                          </p>
-                          <p>
-                            <strong>Last Name:</strong> {showUserData.lastName}
-                          </p>
-                          <p>
-                            <strong>Email:</strong> {showUserData.email}
-                          </p>
-                          <p>
-                            <strong>Mobile No:</strong> {showUserData.mobileNo}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    ""
-                  )}
                 </div>
               </li>
             ))}
           </ul>
         ) : (
           <div className="text-2xl font-bold p-4 text-center">
-            No requests have been made yet.
+            No Request found.
           </div>
         )
       ) : (
@@ -171,4 +112,4 @@ const History = ({ privateKey }) => {
   );
 };
 
-export default History;
+export default ApproveHistory;

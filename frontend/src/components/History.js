@@ -8,7 +8,7 @@ const History = ({ privateKey }) => {
   const [token] = useState("bearer " + cookies.get("token"));
   const [showUserData, setShowUserData] = useState({});
   const [data, setData] = useState(null);
-  console.log(showUserData);
+
   const formatDate = (isoDate) => {
     const dateTime = DateTime.fromISO(isoDate);
     return dateTime.isValid
@@ -50,7 +50,6 @@ const History = ({ privateKey }) => {
   async function processPersonalData(params, requestId) {
     if (privateKey) {
       const objectKeys = Object.keys(params);
-      console.log(objectKeys);
 
       const decryptedDataAll = { requestId };
       for (let i = 0; i < objectKeys.length; i++) {

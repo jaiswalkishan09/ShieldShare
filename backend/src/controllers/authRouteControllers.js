@@ -204,7 +204,7 @@ const updateRequest = async (req, res) => {
     } else {
       return res.status(400).json({ message: "Invalid input" });
     }
-    console.log(data);
+
     await updateRequestTable(
       databaseConnection,
       data,

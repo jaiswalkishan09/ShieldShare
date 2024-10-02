@@ -52,10 +52,10 @@ const Approve = ({ decryptedPersonalData }) => {
         status === "REJECTED" ||
         (status === "APPROVED" && Object.keys(decryptedPersonalData).length > 0)
       ) {
-        setProcessingRequest({
-          ...processingRequest,
+        setProcessingRequest((prev) => ({
+          ...prev,
           [requestId]: "Processing...",
-        });
+        }));
 
         let data = {
           requestId: requestId,
@@ -91,10 +91,10 @@ const Approve = ({ decryptedPersonalData }) => {
         );
         let json_res = await response.json();
         if (response.status === 201) {
-          setProcessingRequest({
-            ...processingRequest,
+          setProcessingRequest((prev) => ({
+            ...prev,
             [requestId]: status,
-          });
+          }));
         } else {
           alert("Something went wrong.Please try again latter.");
         }
@@ -102,10 +102,11 @@ const Approve = ({ decryptedPersonalData }) => {
         alert("Please first add valid private key.");
       }
     } catch (e) {
-      setProcessingRequest({
-        ...processingRequest,
+      setProcessingRequest((prev) => ({
+        ...prev,
         [requestId]: false,
-      });
+      }));
+
       alert("Something went wrong.Please try again latter.");
     }
   }

@@ -41,10 +41,10 @@ const RequestData = () => {
   async function requestInfo(requestedTo) {
     try {
       {
-        setProcessingRequest({
-          ...processingRequest,
+        setProcessingRequest((prev) => ({
+          ...prev,
           [requestedTo]: "Processing...",
-        });
+        }));
       }
       let data = {
         requestedTo,
@@ -60,18 +60,18 @@ const RequestData = () => {
       );
       let json_res = await response.json();
       if (response.status === 201) {
-        setProcessingRequest({
-          ...processingRequest,
+        setProcessingRequest((prev) => ({
+          ...prev,
           [requestedTo]: "Requested",
-        });
+        }));
       } else {
         alert("Something went wrong.Please try again latter.");
       }
     } catch (e) {
-      setProcessingRequest({
-        ...processingRequest,
+      setProcessingRequest((prev) => ({
+        ...prev,
         [requestedTo]: false,
-      });
+      }));
       alert("Something went wrong.Please try again latter.");
     }
   }

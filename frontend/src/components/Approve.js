@@ -46,7 +46,7 @@ const Approve = ({ decryptedPersonalData }) => {
     fetchData();
   }, []);
 
-  async function updateRequest(requestedId, status, publicKey) {
+  async function updateRequest(requestId, status, publicKey) {
     try {
       if (
         status === "REJECTED" ||
@@ -54,16 +54,16 @@ const Approve = ({ decryptedPersonalData }) => {
       ) {
         setProcessingRequest({
           ...processingRequest,
-          [requestedId]: "Processing...",
+          [requestId]: "Processing...",
         });
 
         let data = {
-          requestId: requestedId,
+          requestId: requestId,
           status,
         };
         if (status === "APPROVED") {
           data = {
-            requestId: requestedId,
+            requestId: requestId,
             status,
             firstName: await encryptData(
               decryptedPersonalData.firstName,
@@ -75,7 +75,7 @@ const Approve = ({ decryptedPersonalData }) => {
             ),
             email: await encryptData(decryptedPersonalData.email, publicKey),
             mobileNo: await encryptData(
-              decryptedPersonalData.mobile,
+              decryptedPersonalData.mobileNo,
               publicKey
             ),
           };
@@ -93,7 +93,7 @@ const Approve = ({ decryptedPersonalData }) => {
         if (response.status === 201) {
           setProcessingRequest({
             ...processingRequest,
-            [requestedId]: status,
+            [requestId]: status,
           });
         } else {
           alert("Something went wrong.Please try again latter.");
@@ -104,7 +104,7 @@ const Approve = ({ decryptedPersonalData }) => {
     } catch (e) {
       setProcessingRequest({
         ...processingRequest,
-        [requestedId]: false,
+        [requestId]: false,
       });
       alert("Something went wrong.Please try again latter.");
     }
@@ -125,12 +125,13 @@ const Approve = ({ decryptedPersonalData }) => {
                     <strong>Requested By:</strong> {user.requestedUserName}
                   </span>
                   <span className="text-sm text-gray-400">
-                    <strong>Request Date:</strong> {user.requestedDate}
+                    <strong>Request Date:</strong>{" "}
+                    {formatDate(user.requestedDate)}
                   </span>
                 </div>
                 {processingRequest[user.requestId] ? (
                   <span className="text-green-500">
-                    {processingRequest[(user.requestId, "APPROVED")]}
+                    {processingRequest[user.requestId]}
                   </span>
                 ) : (
                   <div className="flex justify-between gap-2">

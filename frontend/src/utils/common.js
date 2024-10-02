@@ -94,5 +94,6 @@ export const decryptData = async (encryptedData, privateKey) => {
     return decryptedString;
   } catch (e) {
     alert("Invalid private key.");
+    return false;
   }
 };

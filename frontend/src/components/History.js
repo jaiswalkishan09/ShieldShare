@@ -51,7 +51,7 @@ const History = ({ privateKey }) => {
     if (privateKey) {
       const objectKeys = Object.keys(params);
 
-      const decryptedDataAll = { requestId };
+      let decryptedDataAll = { requestId };
       for (let i = 0; i < objectKeys.length; i++) {
         if (
           ["firstName", "lastName", "email", "mobileNo"].includes(objectKeys[i])
@@ -60,6 +60,10 @@ const History = ({ privateKey }) => {
             params[objectKeys[i]],
             privateKey
           );
+          if (!decryptedData) {
+            decryptedDataAll = {};
+            break;
+          }
           decryptedDataAll[objectKeys[i]] = decryptedData;
         }
       }

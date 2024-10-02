@@ -60,6 +60,10 @@ const Dashboard = () => {
               params[objectKeys[i]],
               privateKey
             );
+            if (!decryptedData) {
+              break;
+            }
+
             decryptedDataAll[objectKeys[i]] = decryptedData;
           }
         }

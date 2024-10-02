@@ -1,15 +1,85 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PersonalData from "./PersonalData";
 import RequestData from "./RequestData";
 import History from "./History";
 import Approve from "./Approve";
 import ApproveHistory from "./ApproveHistory";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
+import { decryptData } from "../utils/common";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [privateKey, setPrivateKey] = useState("");
   const [selectedComponent, setSelectedComponent] = useState("personal");
-
+  const [personalData, setPersonalData] = useState(null);
   const [decryptedPersonalData, setDecryptedData] = useState({});
+  const cookies = new Cookies();
+  const [token] = useState("bearer " + cookies.get("token"));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "GET",
+          headers: { "Content-Type": "application/json", Authorization: token },
+        };
+
+        // Await the fetch call
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/usersauth/getuserDetails`,
+          requestOptions
+        );
+
+        // Await the conversion to JSON
+        const json_res = await response.json();
+
+        // Check the status code
+        if (response.status === 200 && json_res) {
+          setPersonalData(json_res);
+        } else {
+          alert("Something went wrong please try again.");
+        }
+      } catch (e) {
+        alert("Something went wrong please try again.");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    try {
+      async function processPersonalData(params) {
+        const objectKeys = Object.keys(params);
+
+        const decryptedDataAll = {};
+        for (let i = 0; i < objectKeys.length; i++) {
+          if (objectKeys[i] != "userName") {
+            const decryptedData = await decryptData(
+              params[objectKeys[i]],
+              privateKey
+            );
+            decryptedDataAll[objectKeys[i]] = decryptedData;
+          }
+        }
+        setDecryptedData(decryptedDataAll);
+      }
+
+      if (privateKey && personalData) {
+        processPersonalData(personalData);
+      }
+    } catch (e) {
+      alert("Error while decrypting data.Please provide valid private key.");
+    }
+  }, [privateKey, personalData]);
+
+  const handleLogout = () => {
+    const cookies = new Cookies();
+    localStorage.clear();
+    cookies.remove("token");
+    navigate("/");
+  };
 
   const handleInputChange = (e) => {
     setPrivateKey(e.target.value);
@@ -19,7 +89,17 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 p-4 flex flex-col ">
       {/* Header */}
       <div className="w-full bg-white p-4 rounded-lg shadow-md mb-6">
-        <h1 className="text-center text-3xl font-bold mb-4">Dashboard</h1>
+        <div className="flex justify-between">
+          <h1 className="text-center text-3xl font-bold mb-4">Dashboard</h1>
+          <button
+            type="button"
+            className="font-bold hover:text-red-500 text-black"
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
+        </div>
+
         <h2 className="text-lg font-bold">
           User Name: {localStorage.getItem("uName")}
         </h2>
@@ -85,11 +165,7 @@ const Dashboard = () => {
         </button>
       </div>
       {selectedComponent === "personal" && (
-        <PersonalData
-          privateKey={privateKey}
-          decryptedPersonalData={decryptedPersonalData}
-          setDecryptedData={setDecryptedData}
-        />
+        <PersonalData decryptedPersonalData={decryptedPersonalData} />
       )}
       {selectedComponent === "request" && <RequestData />}
       {selectedComponent === "history" && <History privateKey={privateKey} />}

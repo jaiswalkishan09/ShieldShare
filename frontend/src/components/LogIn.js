@@ -3,22 +3,23 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [emailCheck, setEmailCheck] = useState(true);
+  const [userName, setUserName] = useState("");
+  const [userNameCheck, setUserNameCheck] = useState(true);
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState(true);
   const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
   const handleSignUp = () => navigate("/signup");
-  const handleMiddleware = () => navigate("/middleware");
+  const handleMiddleware = () => navigate("/dashboard");
 
-  const emailSet = (e) => {
-    setEmail(e.target.value);
-    let emailValidation = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,24}$/;
-    emailValidation.test(e.target.value)
-      ? setEmailCheck(false)
-      : setEmailCheck(true);
+  const userNameSet = (e) => {
+    setUserName(e.target.value);
+    if (e.target.value && e.target.value.length > 0) {
+      setUserNameCheck(false);
+    } else {
+      setUserNameCheck(true);
+    }
   };
 
   const passwordSet = (e) => {
@@ -30,10 +31,10 @@ function Login() {
 
   const loginUser = async () => {
     try {
-      if (!emailCheck && !passwordCheck) {
+      if (!userNameCheck && !passwordCheck) {
         setLoader(true);
         let data = {
-          email: email,
+          uName: userName,
           password: password,
         };
         const requestOptions = {
@@ -49,8 +50,7 @@ function Login() {
         if (response.status === 200) {
           const cookies = new Cookies();
           cookies.set("token", json_res.token);
-          cookies.set("publicKey", json_res.publicKey);
-          cookies.set("privateKey", json_res.privateKey);
+          localStorage.setItem("uName", json_res.uName);
           handleMiddleware();
           setLoader(false);
         } else {
@@ -75,17 +75,17 @@ function Login() {
           {/* Email Field */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Email Address:
+              User Name:
             </label>
             <input
-              type="email"
+              type="userName"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Email Address"
-              onChange={emailSet}
+              placeholder="User Name"
+              onChange={userNameSet}
             />
-            {emailCheck && (
+            {userNameCheck && (
               <p className="text-red-500 text-xs italic">
-                Please provide a valid email.
+                Please provide a valid userName.
               </p>
             )}
           </div>

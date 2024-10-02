@@ -11,8 +11,6 @@ function App() {
         <Route path="/" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        {/* <Route path="/middleware" element={<Middleware />}></Route>
-        <Route path="/verify" element={<VerifyMessage />}></Route> */}
       </Routes>
     </BrowserRouter>
   );

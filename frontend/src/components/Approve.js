@@ -163,7 +163,7 @@ const Approve = ({ decryptedPersonalData }) => {
           </ul>
         ) : (
           <div className="text-2xl font-bold p-4 text-center">
-            No request has been made yet.
+            No approval request has been received.
           </div>
         )
       ) : (

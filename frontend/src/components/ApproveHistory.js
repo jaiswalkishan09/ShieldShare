@@ -95,7 +95,7 @@ const ApproveHistory = () => {
           </ul>
         ) : (
           <div className="text-2xl font-bold p-4 text-center">
-            No Request found.
+            There's no record of approval/rejection requests.
           </div>
         )
       ) : (

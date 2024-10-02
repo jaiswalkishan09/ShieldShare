@@ -157,7 +157,7 @@ const History = ({ privateKey }) => {
           </ul>
         ) : (
           <div className="text-2xl font-bold p-4 text-center">
-            No requests have been made yet.
+            No requests for data to other users have been made yet.
           </div>
         )
       ) : (

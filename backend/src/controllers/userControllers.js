@@ -11,6 +11,7 @@ const {
 
 const { tables } = require("../common/tableAlias");
 const dbConnection = require("../common/connection");
+const { DateTime } = require("luxon");
 
 const signUp = async (req, res) => {
   let SECRET_KEY = process.env.SECRET_KEY;
@@ -32,7 +33,7 @@ const signUp = async (req, res) => {
         Mobile_No: mobileNo,
         Password: hashPassword,
         Public_Key: publicKey,
-        Created_On: new Date().toISOString(),
+        Created_On: DateTime.utc().toISO(),
       };
       let userId = await insertIntoTable(
         databaseConnection,

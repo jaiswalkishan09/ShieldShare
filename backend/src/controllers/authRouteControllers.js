@@ -2,10 +2,13 @@
 var knex = require("knex");
 
 const dbConnection = require("../common/connection");
+const { DateTime } = require("luxon");
+
 const {
   getUserDetailsBasedOnUserId,
   getAllUserWithoutAnyPendingRequest,
   insertIntoTable,
+  getUserHistory,
 } = require("../common/commonFunction");
 const { tables } = require("../common/tableAlias");
 
@@ -73,11 +76,12 @@ const addRequest = async (req, res) => {
   let userId = req.userId;
   let connectDb = await dbConnection.getDataBaseConnection();
   const databaseConnection = knex(connectDb.connection);
+
   try {
     const data = {
       Requested_By: userId,
       Requested_To: requestedTo,
-      Requested_Date: new Date().toISOString(),
+      Requested_Date: DateTime.utc().toISO(),
       Request_Status: "PENDING",
     };
     await insertIntoTable(databaseConnection, data, tables.userRequest);
@@ -90,8 +94,35 @@ const addRequest = async (req, res) => {
       .json({ message: "Something went wrong please try again." });
   }
 };
+
+const getAllUserHistory = async (req, res) => {
+  try {
+    let connectDb = await dbConnection.getDataBaseConnection();
+    const databaseConnection = knex(connectDb.connection);
+    try {
+      let userId = req.userId;
+      let userData = await getUserHistory(databaseConnection, userId);
+
+      databaseConnection ? databaseConnection.destroy() : null;
+      return res.status(200).json({
+        requestData: userData,
+      });
+    } catch (e) {
+      databaseConnection ? databaseConnection.destroy() : null;
+      console.log("Error in getAllUserHistory main catch block", e);
+      return res
+        .status(500)
+        .json({ message: "Something went wrong please try again." });
+    }
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong please try again." });
+  }
+};
 module.exports = {
   getUserDetails,
   getAllUserDetails,
   addRequest,
+  getAllUserHistory,
 };

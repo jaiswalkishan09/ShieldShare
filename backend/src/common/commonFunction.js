@@ -99,27 +99,45 @@ async function insertIntoTable(databaseConnection, data, tableName) {
   }
 }
 
-async function insertIntoTable(databaseConnection, data, tableName) {
+async function getUserHistory(databaseConnection, userId) {
   try {
-    return databaseConnection(tableName)
-      .insert(data)
-      .then((userId) => {
-        return userId[0];
+    return databaseConnection(tables.userRequest)
+      .select(
+        "ub.User_Name as requestedUserName",
+        "ur.Request_Id as requestId",
+        "ur.Requested_Date as requestedDate",
+        "ur.Request_Status as requestStatus",
+        "ur.Request_Updated_On as requestUpdatedOn",
+        "ur.First_Name as firstName",
+        "ur.Last_Name as lastName",
+        "ur.Email as email",
+        "ur.Mobile_No as mobileNo"
+      )
+      .from(`${tables.userRequest} as ur`)
+      .innerJoin(
+        `${tables.userBasicDetails} as ub`,
+        "ur.Requested_To",
+        "ub.User_Id"
+      )
+      .where("ur.Requested_By", userId)
+      .orderBy("ur.Requested_Date", "desc")
+      .then((data) => {
+        return data;
       })
       .catch((e) => {
+        console.log("Error in getUserHistory .catch block", e);
         throw e;
       });
   } catch (e) {
-    console.log("Error in insertIntoTable main catch block.", e);
-    return false;
+    console.log("Error in getUserHistory main catch block", e);
+    throw e;
   }
 }
-
 module.exports = {
-  insertIntoTable,
   checkExistingUser,
   getUserDetailsBasedOnUname,
   getUserDetailsBasedOnUserId,
   getAllUserWithoutAnyPendingRequest,
   insertIntoTable,
+  getUserHistory,
 };

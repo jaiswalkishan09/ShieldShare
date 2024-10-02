@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PersonalData from "./PersonalData";
 import RequestData from "./RequestData";
+import History from "./History";
 
 const Dashboard = () => {
   const [privateKey, setPrivateKey] = useState("");
@@ -56,7 +57,7 @@ const Dashboard = () => {
           Request Users Data
         </button>
         <button
-          onClick={() => selectedComponent("history")}
+          onClick={() => setSelectedComponent("history")}
           className="bg-yellow-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-yellow-600 w-full"
         >
           History
@@ -66,6 +67,7 @@ const Dashboard = () => {
         <PersonalData privateKey={privateKey} />
       )}
       {selectedComponent === "request" && <RequestData />}
+      {selectedComponent === "history" && <History />}
     </div>
   );
 };

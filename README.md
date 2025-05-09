@@ -1,5 +1,37 @@
 # ShieldShare
 
+🔐**Secure Consent-Based Data Sharing System**
+This project is a secure platform designed to facilitate the uploading, hashing, encryption, and controlled sharing of sensitive data using a consent-based mechanism. It ensures data privacy by applying cryptographic hashing and asymmetric encryption, and simulates a real-world scenario where users must explicitly grant consent before their data is accessed by external entities (e.g., businesses or organizations).
+
+✨**Key Features**
+Data Hashing: Sensitive data (e.g., name, address) is hashed using SHA-256, ensuring raw data is never transmitted or stored.
+
+Consent-Based Access Control:
+
+Users can view incoming data access requests.
+
+Users have full control to approve or reject requests.
+
+Asymmetric Encryption: Upon user consent, data is encrypted using the entity’s public key and securely shared.
+
+Secure Data Transmission: Encrypted data and its hash are sent to a central repository for retrieval.
+
+Decryption Simulation: Entities can decrypt received data using their private key.
+
+Logging & Error Handling (Bonus):
+
+Tracks consent actions, encryption, transmission, and decryption.
+
+Handles consent denials and data access failures gracefully.
+
+🛠 **Technologies Used**
+Node.js for backend logic
+React.js for frontend
+
+SHA-256 for hashing
+
+RSA for encryption/decryption
+
 ## Prerequisites
 
 - Node.js must be installed on your system.
